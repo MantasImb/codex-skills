@@ -1,0 +1,4 @@
+interface:
+  display_name: "PRD to Issues"
+  short_description: "Turn PRDs into tracer-bullet GitHub issues"
+  default_prompt: "Use $prd-to-issues to break this approved PRD into thin vertical-slice GitHub issues, review the dependency graph with me, and then create the issues in dependency order."
