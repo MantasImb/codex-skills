@@ -1,0 +1,4 @@
+interface:
+  display_name: "Write a PRD"
+  short_description: "Turn feature ideas into reviewable PRDs"
+  default_prompt: "Use $write-a-prd to turn this feature idea into an implementation-ready PRD through repo exploration, a decision-tree interview, module design, and a GitHub issue draft."
