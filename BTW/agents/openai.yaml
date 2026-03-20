@@ -1,0 +1,7 @@
+interface:
+  display_name: "BTW"
+  short_description: "Route side questions to a reusable sub-agent"
+  default_prompt: "Use $BTW to send this side question to the reusable read-only BTW sub-agent."
+
+policy:
+  allow_implicit_invocation: false
