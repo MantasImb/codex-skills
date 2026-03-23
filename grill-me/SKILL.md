@@ -25,6 +25,8 @@ Do not dump a questionnaire. Run an interview.
 
 When a question does not settle after direct discussion in the main thread, spawn a fresh subagent for that single unresolved branch. Give the subagent only the minimum task-local context needed to reason about the question. Do not pass the full grill-me thread, your hidden chain of reasoning, or your preferred answer. Treat the subagent as an isolated deep-dive surface, then bring back only the useful conclusions, alternatives, and evidence.
 
+Treat branch subagents as temporary tools, not long-lived collaborators. Keep each one tied to a single unresolved branch, and close it as soon as that branch is settled or explicitly abandoned.
+
 ## Workflow
 
 ### 1. Establish the Plan Artifact
@@ -104,6 +106,12 @@ If the answer does not produce settled behavior, a crisp decision, or a shared f
 - Keep the main thread lean; do not paste the whole unresolved discussion into the subagent
 - Reconcile the subagent output back into the main decision tree
 
+After reconciling a subagent's output:
+- Confirm with the user whether the branch is now settled
+- If settled, close the subagent immediately
+- If explicitly deferred or abandoned, close the subagent immediately
+- If still unresolved, keep the subagent only if it is actively useful; otherwise close it and spawn a fresh one later if needed
+
 ### 5. Force Precision
 
 When the user answers vaguely, tighten the abstraction instead of accepting fuzzy language.
@@ -158,6 +166,7 @@ When you use a subagent, also include:
 - What minimal context was delegated
 - What conclusion or option set came back
 - Whether the branch is now resolved, narrowed, or still open
+- Whether the subagent was closed or remains temporarily active
 
 When useful, show a short checkpoint list of:
 - Resolved decisions
