@@ -23,6 +23,8 @@ If the answer may already exist in the codebase, inspect the codebase first. Ask
 
 Do not dump a questionnaire. Run an interview.
 
+When a question does not settle after direct discussion in the main thread, spawn a fresh subagent for that single unresolved branch. Give the subagent only the minimum task-local context needed to reason about the question. Do not pass the full grill-me thread, your hidden chain of reasoning, or your preferred answer. Treat the subagent as an isolated deep-dive surface, then bring back only the useful conclusions, alternatives, and evidence.
+
 ## Workflow
 
 ### 1. Establish the Plan Artifact
@@ -94,6 +96,14 @@ After each answer:
 - State what remains open
 - Move to the next blocking dependency
 
+If the answer does not produce settled behavior, a crisp decision, or a shared framing:
+- Confirm why the branch is still unresolved
+- Decide whether the missing piece is factual, conceptual, or preference-driven
+- If a deeper isolated discussion would help, spawn a subagent focused only on that branch
+- Instruct the subagent with the raw question and the minimum supporting artifacts
+- Keep the main thread lean; do not paste the whole unresolved discussion into the subagent
+- Reconcile the subagent output back into the main decision tree
+
 ### 5. Force Precision
 
 When the user answers vaguely, tighten the abstraction instead of accepting fuzzy language.
@@ -142,6 +152,12 @@ Keep the conversation moving. A good turn usually contains:
 - A one- or two-sentence summary of the current model
 - Any codebase findings that changed the picture
 - The single next question, or a tightly related pair
+
+When you use a subagent, also include:
+- Why the branch was worth isolating
+- What minimal context was delegated
+- What conclusion or option set came back
+- Whether the branch is now resolved, narrowed, or still open
 
 When useful, show a short checkpoint list of:
 - Resolved decisions
