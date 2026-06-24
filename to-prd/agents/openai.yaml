@@ -1,0 +1,4 @@
+interface:
+  display_name: "To PRD"
+  short_description: "Save PRDs and project-native issue files"
+  default_prompt: "Use $to-prd to turn the current conversation context into a PRD, save it in the project-native PRD location, confirm the module and testing breakdown, and save a matching issue file in the most specific project-native issues folder."

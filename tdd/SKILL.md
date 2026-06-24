@@ -1,6 +1,6 @@
 ---
 name: tdd
-description: Test-driven development with the red-green-refactor loop for TypeScript applications and Rust backend services. Use when the user wants to build features or fix bugs with TDD, mentions "red-green-refactor", wants test-first development, asks for integration tests or behavior-focused tests, or needs help choosing the right public test surface in service-oriented code.
+description: Test-driven development with red-green-refactor loop. Use when user wants to build features or fix bugs using TDD, mentions "red-green-refactor", wants integration tests, or asks for test-first development.
 ---
 
 # Test-Driven Development
@@ -13,7 +13,7 @@ description: Test-driven development with the red-green-refactor loop for TypeSc
 
 **Bad tests** are coupled to implementation. They mock internal collaborators, test private methods, or verify through external means (like querying a database directly instead of using the interface). The warning sign: your test breaks when you refactor, but behavior hasn't changed. If you rename an internal function and tests fail, those tests were testing implementation, not behavior.
 
-See [tests.md](tests.md) for examples and [mocking.md](mocking.md) for boundary-mocking guidelines.
+See [tests.md](tests.md) for examples and [mocking.md](mocking.md) for mocking guidelines.
 
 ## Anti-Pattern: Horizontal Slices
 
@@ -44,28 +44,20 @@ RIGHT (vertical):
 
 ### 1. Planning
 
+When exploring the codebase, use the project's domain glossary so that test names and interface vocabulary match the project's language, and respect ADRs in the area you're touching.
+
 Before writing any code:
 
 - [ ] Confirm with user what interface changes are needed
 - [ ] Confirm with user which behaviors to test (prioritize)
 - [ ] Identify opportunities for [deep modules](deep-modules.md) (small interface, deep implementation)
 - [ ] Design interfaces for [testability](interface-design.md)
-- [ ] Choose the narrowest public test surface that still proves the behavior end-to-end
 - [ ] List the behaviors to test (not implementation steps)
 - [ ] Get user approval on the plan
 
 Ask: "What should the public interface look like? Which behaviors are most important to test?"
 
 **You can't test everything.** Confirm with the user exactly which behaviors matter most. Focus testing effort on critical paths and complex logic, not every possible edge case.
-
-Pick the test surface based on the code under change:
-
-- TypeScript library or module: test the exported function/class API
-- HTTP service: test through request handlers or the application service layer, not repository internals
-- Rust domain/service code: test the public function, trait-backed service, or crate API
-- Rust HTTP backend: prefer request/response tests against the handler/router; drop lower only when the behavior truly lives below that layer
-
-If the current interface is hard to test, change the interface or dependency seams before adding more mocks.
 
 ### 2. Tracer Bullet
 
@@ -93,7 +85,6 @@ Rules:
 - Only enough code to pass current test
 - Don't anticipate future tests
 - Keep tests focused on observable behavior
-- In Rust, prefer real domain objects and lightweight fakes over heavy mocking frameworks unless the boundary is truly external
 
 ### 4. Refactor
 
@@ -107,6 +98,25 @@ After all tests pass, look for [refactor candidates](refactoring.md):
 
 **Never refactor while RED.** Get to GREEN first.
 
+### 5. Second-Opinion Review
+
+After implementation, refactoring, and the relevant tests are GREEN, run CodeRabbit from the repository root:
+
+```bash
+cr review --agent
+```
+
+Use this as a second opinion on the completed TDD work:
+
+- Evaluate each finding against the requested behavior, public contract, repository conventions, and test evidence.
+- Fix findings that identify real correctness, regression, maintainability, or test-coverage problems.
+- Do not apply suggestions blindly or expand the task with unrelated refactors.
+- Record rejected findings briefly when they are false positives, out of scope, or conflict with repository guidance.
+- If review findings cause code changes, rerun the focused tests and relevant broader suite.
+- Run `cr review --agent` one final time after material review-driven changes; do not create an open-ended review loop.
+
+If the command is unavailable or cannot complete because of authentication, network, or service errors, report that clearly instead of silently skipping the review.
+
 ## Checklist Per Cycle
 
 ```
@@ -117,10 +127,14 @@ After all tests pass, look for [refactor candidates](refactoring.md):
 [ ] No speculative features added
 ```
 
-## Language Notes
+## End-of-Work Checklist
 
-- Keep the workflow identical across languages; only the test harness changes.
-- In TypeScript, default to the project's existing test runner and assertion style.
-- In Rust, default to `cargo test` with focused unit or integration tests that exercise public behavior.
-- For Rust services, prefer constructor injection with traits or small ports at external boundaries so tests can substitute a fake adapter without coupling to implementation details.
-- Do not translate TypeScript testing habits mechanically into Rust. For example, avoid asserting on internal call counts when a returned value, emitted event, persisted state reachable through a public API, or HTTP response can prove the behavior directly.
+```
+[ ] Focused tests pass
+[ ] Relevant broader test suite passes
+[ ] cr review --agent completed
+[ ] CodeRabbit findings were assessed, not blindly applied
+[ ] Tests were rerun after review-driven changes
+```
+
+In the final report, summarize the CodeRabbit review outcome: actionable findings fixed, findings rejected with reasons, or why the review command could not complete.

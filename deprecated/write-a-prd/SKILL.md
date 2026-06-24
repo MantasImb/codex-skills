@@ -10,6 +10,7 @@ description: Create a PRD through user interview, codebase exploration, and modu
 Drive the feature from vague idea to implementation-ready PRD.
 
 Work in this order unless the task is already far along:
+
 1. Gather the user's full problem statement and any proposed solutions.
 2. Inspect the repository to verify assumptions and understand the current system.
 3. Interview the user until the important product and technical decisions are resolved or explicitly deferred.
@@ -32,6 +33,7 @@ Skip steps that are already complete or unnecessary.
 ### 1. Gather the Initial Problem
 
 Start by asking the user for a long, detailed description of:
+
 - The problem they want to solve
 - Who is affected
 - What success looks like
@@ -45,6 +47,7 @@ If they already provided substantial detail, summarize it back and move on.
 Inspect the repository before asking foundational technical questions.
 
 Look for:
+
 - Existing modules that would own the change
 - Similar features, flows, or prior art
 - Current interfaces, schemas, config, and API boundaries
@@ -52,6 +55,7 @@ Look for:
 - Docs, ADRs, and tickets that constrain the design
 
 Report:
+
 - What the codebase clearly shows
 - What that implies for the feature
 - What remains ambiguous
@@ -61,6 +65,7 @@ Report:
 Drive toward a shared understanding by resolving the highest-leverage unknowns first.
 
 Cover, as needed:
+
 - User roles and actors
 - Entry points and core flows
 - Edge cases and failure modes
@@ -75,6 +80,7 @@ Cover, as needed:
 Do not dump a questionnaire. Ask only the next question that materially unlocks the plan.
 
 When the user is vague, force precision:
+
 - "Fast" means latency or throughput targets
 - "Simple" means fewer moving parts, less operator burden, or less user friction
 - "Support retries" means idempotency, deduplication, or resumable workflows
@@ -84,6 +90,7 @@ When the user is vague, force precision:
 Once the feature is mostly understood, sketch the major modules to build or modify.
 
 For each module, identify:
+
 - Its responsibility
 - Its interface boundary
 - Whether it can be made deep: simple public surface, concentrated internal complexity, easy isolated testing
@@ -92,6 +99,7 @@ For each module, identify:
 Actively look for opportunities to extract deep modules instead of spreading logic across shallow layers.
 
 Then confirm with the user:
+
 - Whether the module breakdown matches expectations
 - Which modules deserve explicit test coverage
 - Whether any behaviors should be validated only through higher-level integration tests
@@ -149,6 +157,7 @@ Any further notes about the feature.
 ## Submission
 
 After the PRD is complete:
+
 - Prefer to show the user the final title and PRD body before submission when the scope or wording is still changing.
 - If the user asked for direct issue creation and the repository supports it, create a GitHub issue.
 - If issue creation is not possible, provide a ready-to-submit issue title and body.
@@ -158,6 +167,7 @@ When creating the issue, use a concrete title that names the user-facing capabil
 ## Good Outcome
 
 The skill is complete when:
+
 - The important decisions are resolved or explicitly deferred
 - The module shape is clear enough to guide implementation
 - Testing expectations are explicit

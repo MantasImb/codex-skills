@@ -1,0 +1,4 @@
+interface:
+  display_name: "Grill With Docs"
+  short_description: "Stress-test plans against repo docs"
+  default_prompt: "Use $grill-with-docs to challenge this plan against the codebase, domain language, CONTEXT.md, and ADRs while documenting resolved decisions."

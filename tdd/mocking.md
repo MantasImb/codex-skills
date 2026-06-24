@@ -13,12 +13,6 @@ Don't mock:
 - Internal collaborators
 - Anything you control
 
-Rust additions:
-
-- Prefer a fake implementation of a trait or port over a behavior-heavy mock when the boundary is under your control
-- Keep traits small so test doubles stay simple
-- Do not introduce a trait only for testing if no real boundary exists
-
 ## Designing for Mockability
 
 At system boundaries, design interfaces that are easy to mock:
@@ -37,22 +31,6 @@ function processPayment(order, paymentClient) {
 function processPayment(order) {
   const client = new StripeClient(process.env.STRIPE_KEY);
   return client.charge(order.total);
-}
-```
-
-```rust
-// Easy to substitute in tests
-async fn process_payment(
-    order: &Order,
-    payment_client: &dyn PaymentClient,
-) -> Result<ChargeId, PaymentError> {
-    payment_client.charge(order.total()).await
-}
-
-// Hard to substitute in tests
-async fn process_payment(order: &Order) -> Result<ChargeId, PaymentError> {
-    let client = StripeClient::new(std::env::var("STRIPE_KEY")?);
-    client.charge(order.total()).await
 }
 ```
 
@@ -80,8 +58,3 @@ The SDK approach means:
 - No conditional logic in test setup
 - Easier to see which endpoints a test exercises
 - Type safety per endpoint
-
-Rust equivalent:
-
-- Prefer a trait with explicit methods such as `get_user`, `get_orders`, and `create_order`
-- Avoid one generic `request` method that pushes branching and protocol details into every test double

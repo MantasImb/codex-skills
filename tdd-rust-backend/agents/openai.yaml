@@ -1,0 +1,4 @@
+interface:
+  display_name: "Rust Backend TDD"
+  short_description: "TDD for Rust backend services"
+  default_prompt: "Use $tdd-rust-backend to build this Rust backend change with red-green-refactor through public behavior tests."

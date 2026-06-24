@@ -1,0 +1,4 @@
+interface:
+  display_name: "Next.js Jest TDD"
+  short_description: "TDD for Next.js with Jest"
+  default_prompt: "Use $tdd-nextjs-jest to build this Next.js Jest change with red-green-refactor through user-visible or route-visible behavior tests."

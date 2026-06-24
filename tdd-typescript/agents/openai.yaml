@@ -1,0 +1,4 @@
+interface:
+  display_name: "TypeScript TDD"
+  short_description: "TDD for TypeScript modules"
+  default_prompt: "Use $tdd-typescript to build this TypeScript change with red-green-refactor through public behavior tests."
