@@ -1,11 +1,25 @@
 ---
 name: grill-with-docs
-description: Interactive plan grilling that stress-tests a proposal against repository docs, domain language, code evidence, CONTEXT.md glossaries, and ADRs. Use when the user wants Codex to challenge a plan, sharpen terminology, resolve design decisions one-by-one, update domain context docs as decisions crystallize, or record durable architectural decisions without separating the interview from documentation work.
+description: Discovery and documentation-mode plan grilling that stress-tests a proposal against repository docs, domain language, code evidence, CONTEXT.md glossaries, and ADRs without modifying application code or tests. Use when the user wants Codex to challenge a plan, sharpen terminology, resolve design decisions one-by-one, update domain context docs as decisions crystallize, or record durable architectural decisions before implementation is explicitly requested.
 ---
 
 # Grill With Docs
 
 Run an interactive design interview that treats documentation as part of the conversation. Challenge the plan against the repository's existing language and decisions, inspect code before asking factual questions, and update docs when the conversation resolves durable domain terms or architectural choices.
+
+## Discovery Mode
+
+Stay in discovery and documentation mode until the user explicitly requests implementation.
+
+Treat answers to design questions as approval of design decisions only. They do not authorize application code changes, test changes, migrations, generated implementation artifacts, or refactors.
+
+Allowed changes during this mode:
+
+- Update `CONTEXT.md` and `CONTEXT-MAP.md` when domain language, boundaries, relationships, or ambiguities are resolved.
+- Create or update ADRs when a durable architectural decision meets the ADR criteria.
+- Edit planning or documentation artifacts directly tied to the design discussion.
+
+Before modifying application code or tests, require a clear implementation request such as "implement this," "make the code change," "write the tests," or equivalent explicit wording.
 
 ## Core Workflow
 

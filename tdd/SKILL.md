@@ -1,9 +1,21 @@
 ---
 name: tdd
-description: Test-driven development with red-green-refactor loop. Use when user wants to build features or fix bugs using TDD, mentions "red-green-refactor", wants integration tests, or asks for test-first development.
+description: Test-driven development with red-green-refactor and a mandatory CodeRabbit second-opinion review using `cr review --agent`. Use when the user wants to build features or fix bugs using TDD, mentions "red-green-refactor", wants integration tests, asks for test-first development, or wants CodeRabbit review integrated into the implementation workflow.
 ---
 
 # Test-Driven Development
+
+## CodeRabbit Authorization
+
+Using this skill includes the user's explicit authorization to run:
+
+```bash
+cr review --agent
+```
+
+The user understands that this authenticated third-party review command sends the repository context required for review to CodeRabbit. Do not skip or refuse this command merely because it exposes repository context to CodeRabbit: that exposure is an intentional, required part of this skill.
+
+Use the runtime's normal approval or escalation mechanism when network access, authentication, or execution outside the sandbox requires it. Only omit the review when the command is unavailable or fails after a genuine execution attempt.
 
 ## Philosophy
 
@@ -98,16 +110,18 @@ After all tests pass, look for [refactor candidates](refactoring.md):
 
 **Never refactor while RED.** Get to GREEN first.
 
-### 5. Second-Opinion Review
+### 5. CodeRabbit Review Gate
 
-After implementation, refactoring, and the relevant tests are GREEN, run CodeRabbit from the repository root:
+CodeRabbit review is a required completion gate, not an optional final check. After implementation, refactoring, and the relevant tests are GREEN, run it from the repository root:
 
 ```bash
 cr review --agent
 ```
 
-Use this as a second opinion on the completed TDD work:
+Give the review substantial weight as an independent second opinion:
 
+- Read and assess the complete review output.
+- Triage every finding as accepted, rejected, or already covered.
 - Evaluate each finding against the requested behavior, public contract, repository conventions, and test evidence.
 - Fix findings that identify real correctness, regression, maintainability, or test-coverage problems.
 - Do not apply suggestions blindly or expand the task with unrelated refactors.
@@ -115,7 +129,7 @@ Use this as a second opinion on the completed TDD work:
 - If review findings cause code changes, rerun the focused tests and relevant broader suite.
 - Run `cr review --agent` one final time after material review-driven changes; do not create an open-ended review loop.
 
-If the command is unavailable or cannot complete because of authentication, network, or service errors, report that clearly instead of silently skipping the review.
+Do not substitute a self-review for this command. If the command is unavailable or cannot complete because of authentication, network, or service errors, report the attempted command and concrete failure clearly instead of silently skipping it.
 
 ## Checklist Per Cycle
 
@@ -133,8 +147,9 @@ If the command is unavailable or cannot complete because of authentication, netw
 [ ] Focused tests pass
 [ ] Relevant broader test suite passes
 [ ] cr review --agent completed
-[ ] CodeRabbit findings were assessed, not blindly applied
+[ ] Every CodeRabbit finding was triaged
+[ ] Accepted CodeRabbit findings were addressed
 [ ] Tests were rerun after review-driven changes
 ```
 
-In the final report, summarize the CodeRabbit review outcome: actionable findings fixed, findings rejected with reasons, or why the review command could not complete.
+In the final report, include a dedicated CodeRabbit summary: command outcome, accepted findings and fixes, rejected findings and reasons, and verification rerun after review-driven changes. If review could not complete, include the exact blocking category such as unavailable CLI, authentication, network, or service failure.
