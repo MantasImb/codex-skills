@@ -1,6 +1,6 @@
 # UI Prototype
 
-Generate **several radically different UI variations** on a single route, switchable from a floating bottom bar. The user flips between variants in the browser, picks one (or steals bits from each), then throws the rest away.
+Generate **several structurally different UI variations** on a single route, switchable from a floating bottom bar. The user compares them in app context and evaluates what to keep. Follow [SKILL.md](SKILL.md) for provisional findings, retained local evidence, explicit adoption, and agreed cleanup.
 
 If the question is about logic/state rather than what something looks like — wrong branch. Use [LOGIC.md](LOGIC.md).
 
@@ -17,7 +17,7 @@ A UI prototype is much easier to judge when it's **butting up against the rest o
 
 ### Sub-shape A — adjustment to an existing page (preferred)
 
-The route already exists. Variants are rendered **on the same route**, gated by a `?variant=` URL search param. The existing data fetching, params, and auth all stay — only the rendering swaps. This is the default; pick it unless there's a specific reason not to.
+The route already exists. Variants are rendered **on the same route**, selected by a `?variant=` URL search param inside the project's development/prototype gate. Preserve the existing surrounding layout, params, auth, and appropriate read-only data context; stub mutation paths. Without an active prototype gate, keep the normal page rendering regardless of the query parameter. This is the default when the page provides the right context.
 
 If the prototype is for something that doesn't yet have a page but _would naturally live inside one_ (a new section of the dashboard, a new card on the settings screen, a new step in an existing flow) — that's still sub-shape A. Mount the variants inside the host page.
 
@@ -59,6 +59,8 @@ Create a single switcher component on the route:
 
 ```tsx
 // pseudo-code — adapt to the project's framework
+// Evaluate the repository's supported prototype gate before selection.
+if (!prototypeEnabled) return <NormalPage {...data} />;
 const variant = searchParams.get("variant") ?? "A";
 return (
   <>
@@ -70,9 +72,9 @@ return (
 );
 ```
 
-For sub-shape A (existing page): keep all the existing data fetching above the switcher; only the rendered subtree changes per variant.
+For sub-shape A (existing page): preserve appropriate read-only data and app context; only the rendered subtree changes per variant. Keep mutation handlers stubbed. Apply the prototype gate before variant selection so production cannot select a prototype through a query parameter.
 
-For sub-shape B (new page): the throwaway route under `/prototype/<name>` mounts the same switcher.
+For sub-shape B (new page): the throwaway route, named according to repository conventions, mounts the same switcher. Exclude the route from production using the project's supported mechanism.
 
 ### 4. Build the floating switcher
 
@@ -84,10 +86,10 @@ A small fixed-position bar at the bottom-centre of the screen with three pieces:
 
 Behaviour:
 
-- Clicking an arrow updates the URL search param (use the framework's router — `router.replace` on Next, `navigate` on React Router, etc) so the variant is shareable and reload-stable.
+- Clicking an arrow updates the URL search param using the project's existing routing API so the selected variant remains reload-stable. Check current framework documentation if changing routing behavior or using unfamiliar APIs. A local URL does not authorize publication.
 - Keyboard: `←` and `→` arrow keys also cycle. Don't intercept arrow keys when an `<input>`, `<textarea>`, or `[contenteditable]` is focused.
 - Visually distinct from the page (e.g. high-contrast pill, subtle shadow) so it's obviously not part of the design being evaluated.
-- Hidden in production builds — gate on `process.env.NODE_ENV !== 'production'` or an equivalent check, so a stray prototype merge can't ship the bar to users.
+- Exclude the switcher, variant selection, and prototype variants from production using the repository's supported development/prototype gate. Do not hide only the bar while leaving prototype rendering selectable. Inspect the production path and report verification gaps.
 
 Put the switcher in a single shared component so both sub-shapes can reuse it. Locate it wherever shared UI lives in the project.
 
@@ -95,14 +97,13 @@ Put the switcher in a single shared component so both sub-shapes can reuse it. L
 
 Surface the URL (and the `?variant=` keys). The user will flip through whenever they get to it. The interesting feedback is usually **"I want the header from B with the sidebar from C"** — that's the actual design they want.
 
-### 6. Capture the answer and clean up
+### 6. Capture the evaluated answer and retain evidence
 
-Once a variant has won, write down which one and why (commit message, ADR, issue, or a `NOTES.md` next to the prototype if running AFK and the user hasn't responded yet). Then:
+Until the user evaluates the variants, record findings as provisional. Once evaluated, record the chosen direction and why in the PRD or existing session document, along with the question, limitations, and local artifact pointer. Preserve representative screenshots or other inspectable evidence of the compared alternatives before agreed cleanup. Follow [SKILL.md](SKILL.md); do not automatically commit, publish, delete evidence, or promote a winner.
 
-- **Sub-shape A** — delete the losing variants and the switcher; fold the winner into the existing page.
-- **Sub-shape B** — promote the winning variant to a real route, delete the throwaway route and the switcher.
+If production adoption is requested, implement the chosen direction with normal tests, error handling, and integration verification. Remove exploration scaffolding from production paths. Delete retained runnable artifacts only after user review and agreement on cleanup, preserving the agreed evidence and updating links.
 
-Don't leave variant components or the switcher lying around. They rot fast and confuse the next reader.
+Retained local evidence should stay clearly labeled; it must not become an active production route or feature.
 
 ## Anti-patterns
 

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Prototype"
+  short_description: "Explore logic models and contrasting UI designs"
+  default_prompt: "Use $prototype to build an interactive demo for this design question and retain local evidence for review."

@@ -1,21 +1,25 @@
 ---
 name: tdd-typescript
-description: Test-driven development for TypeScript libraries, application modules, services, and Node code using red-green-refactor. Use when building or fixing TypeScript behavior through exported APIs, public module contracts, existing test runners, boundary mocks, and behavior-focused tests outside framework-specific Next.js Jest workflows.
+description: Apply shared TDD to requested test-first TypeScript library, package, service, or Node behavior using existing runners and public contracts. Use for clear TDD/behavior-test implementation requests or as an implement adapter; framework-neutral work only, not Next.js runtime/DOM behavior.
 ---
 
 # TypeScript TDD Adapter
+
+Select this skill implicitly only for a clear, specific request to perform its workflow. Keywords, topic overlap, explanation-only questions, or speculation about future work do not start it. Follow explicit invocation or intentional composition by an already active workflow within its scope.
 
 This skill adapts the shared TDD workflow for framework-neutral TypeScript.
 
 ## Load First
 
-Use the shared TDD skill as the source of truth:
+Use the shared TDD skill as the source of truth. Resolve its installed location from the available skills; the links below describe this repository layout. If installed separately, resolve the same resources relative to the located `tdd` folder rather than assuming sibling paths.
 
-- Read [../tdd/SKILL.md](../tdd/SKILL.md) for the red-green-refactor workflow, horizontal-slice warning, planning checklist, tracer bullet loop, and cycle checklist.
+- Read [../tdd/SKILL.md](../tdd/SKILL.md) for red-green-refactor, settled-decision reuse, independently justified expectations, and test-boundary selection.
 - Read [../tdd/tests.md](../tdd/tests.md) when choosing test shape or reviewing whether a test verifies behavior.
 - Read [../tdd/mocking.md](../tdd/mocking.md) when deciding whether to mock, fake, or use real collaborators.
 - Read [../tdd/interface-design.md](../tdd/interface-design.md) when changing an exported API or dependency boundary.
 - Read [../tdd/deep-modules.md](../tdd/deep-modules.md) and [../tdd/refactoring.md](../tdd/refactoring.md) before refactoring after GREEN.
+
+If the shared TDD skill or a required resource cannot be found, report the missing dependency instead of claiming its workflow was applied.
 
 Do not duplicate the shared workflow in your reasoning or output. Apply it, then add the TypeScript-specific decisions below.
 
@@ -30,7 +34,7 @@ Use `tdd-nextjs-jest` instead when React rendering, Next.js App Router behavior,
 
 ## Public Test Surface
 
-Choose the narrowest public TypeScript surface that proves the behavior:
+Reuse an agreed public test boundary. Otherwise choose a public TypeScript boundary that proves the requested behavior; prefer a higher existing boundary when it provides meaningful coverage without unnecessary setup:
 
 - Exported function or value object.
 - Public class or service method.
@@ -39,6 +43,8 @@ Choose the narrowest public TypeScript surface that proves the behavior:
 - HTTP or message handler when that handler is the module's public boundary.
 
 Avoid testing private helpers, internal module wiring, constructor calls, call order, or file layout. A refactor that preserves exported behavior should not break the test.
+
+Package or service tests prove their public contracts with the collaborators exercised. They do not establish HTTP routing, serialization, real persistence, or an external service's behavior when those boundaries are bypassed or faked. Use real handler/server, persistence, or integration checks when those are part of the requirement, and report any remaining gap.
 
 ## TypeScript Boundaries
 
@@ -52,22 +58,10 @@ Prefer small typed fakes or explicit dependency objects over broad `jest.mock`, 
 
 ## Red-Green Commands
 
-Use the repository's existing runner and focused filters:
-
-```bash
-npm test -- checkout
-pnpm test checkout
-bun test checkout
-vitest checkout
-```
+Discover the existing runner, package scripts, workspace configuration, and focused filters from the repository. Use that setup instead of selecting a new runner or guessing a command from the language alone. Check current runner documentation when changing configuration or using unfamiliar options.
 
 After focused GREEN and refactor steps, run the relevant broader TypeScript suite before closing.
 
 ## End Report
 
-Include a concise "Tests implemented" list:
-
-- Behavior or test name.
-- Scope: `unit`, `integration`, `api/handler`, or repository-native equivalent.
-- File path.
-- Focused and broader test commands run, including unrelated remaining failures.
+Read [../tdd/reporting.md](../tdd/reporting.md) for the shared chat-report policy. Describe the actual boundary using package/API, application/service, HTTP/message handler, real persistence, or repository-native terminology; distinguish faked boundaries from real integration coverage. Under `implement`, contribute evidence to its consolidated report.

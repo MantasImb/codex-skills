@@ -1,4 +1,4 @@
 interface:
   display_name: "PRD to Plan"
-  short_description: "Turn PRDs into phased build plans"
-  default_prompt: "Use $prd-to-plan to turn this PRD into a phased implementation plan with tracer-bullet vertical slices and save it under ./plans/."
+  short_description: "Plan verifiable phases with dependencies and evidence"
+  default_prompt: "Use $prd-to-plan to turn this PRD into reviewed vertical phases with stable IDs, dependencies, and verification/progress fields, then save it under ./plans/."

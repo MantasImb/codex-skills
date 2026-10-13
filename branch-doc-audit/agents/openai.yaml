@@ -1,4 +1,4 @@
 interface:
   display_name: "Branch Doc Audit"
-  short_description: "Audit branch changes against repo docs"
-  default_prompt: "Use $branch-doc-audit to compare the current branch or unpushed diff against repository documentation and list misalignments before making any changes."
+  short_description: "Audit changes against requirements and repo docs"
+  default_prompt: "Use $branch-doc-audit to compare this change against its PRD/plan requirements and repository documentation, reporting coverage gaps and drift before fixes."

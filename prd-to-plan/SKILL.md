@@ -1,158 +1,64 @@
 ---
 name: prd-to-plan
-description: Turn a PRD into a multi-phase implementation plan using tracer-bullet vertical slices, saved as a local Markdown file in ./plans/. Use when the user wants to break down a PRD, create an implementation plan, plan phases from a PRD, or mentions "tracer bullets".
+description: Translate a PRD into a reviewed local implementation plan with verifiable vertical phases, stable IDs, dependencies, and progress/evidence fields. Use when the user requests implementation planning from a PRD; saving the plan does not start implementation.
 ---
 
 # PRD to Plan
 
-Turn an approved PRD into a phased implementation plan built from thin vertical slices. The output is a local Markdown file in `./plans/`.
+Select this skill implicitly only for a clear, specific request to perform its workflow. Keywords, topic overlap, explanation-only questions, or speculation about future work do not start it. Follow explicit invocation or intentional composition by an already active workflow within its scope.
 
-Work in this order unless the task is already partially complete:
-1. Confirm the PRD is present in the conversation or identify the local PRD file.
-2. Explore the codebase to ground the plan in the current architecture.
-3. Extract the durable decisions that every phase will rely on.
-4. Propose tracer-bullet phases as end-to-end vertical slices.
-5. Review the phase breakdown with the user and iterate until approved.
-6. Write the final Markdown plan into `./plans/`.
+Translate the PRD into independently verifiable phases and save the reviewed plan in `./plans/`. The PRD owns requirements and design decisions; the plan owns sequencing, dependencies, implementation progress, and verification evidence.
 
-## Operating Rules
+## Ground the Plan
 
-- Treat each phase as a vertical slice through the full system, not a horizontal layer milestone.
-- Prefer many thin slices over a few thick ones.
-- Each slice must be demoable, testable, or otherwise verifiable on its own.
-- Do not anchor the plan to volatile implementation details such as specific file names, helper names, or internal refactors.
-- Do capture durable decisions such as routes, schema shapes, key models, auth boundaries, and third-party integration boundaries.
-- Distinguish clearly between repo facts, PRD requirements, and your inferences.
-- Do not write the final plan file until the user approves the phase breakdown.
+Find the supplied PRD in conversation or local files and read its requirements, acceptance criteria, assumptions, deferrals, agreed test boundaries, and linked context docs/ADRs/prototypes. If the source is missing or ambiguous, ask for the specific missing reference. Do not restart settled discovery or invent requirements to fill gaps.
 
-## Workflow
+Inspect relevant repository architecture, interfaces, persistence, permissions, integrations, tests, and similar features. Distinguish observed facts from requirements and planning inferences. Resolve material blockers with targeted questions; keep non-blocking assumptions and gaps visible.
 
-### 1. Confirm the PRD Is in Context
+Reference durable decisions from the PRD rather than keeping a second copy that can drift. Explain any execution implications, such as a compatibility period or an integration dependency. If repository evidence requires a changed requirement or architecture choice, surface that decision and update the PRD before planning affected work.
 
-The PRD should already be in the conversation or available as a local file.
+## Build Verifiable Phases
 
-If it is missing, ask the user to paste it or point to the file before proceeding.
+Default to thin vertical slices. Each phase delivers a coherent observable path through the layers involved, with enough verification to establish that phase's behavior. Do not impose frontend/backend/database layers when they are irrelevant, or turn every layer into a separate milestone.
 
-### 2. Explore the Codebase
+For each phase:
 
-Inspect the repository before proposing phases.
+- Assign a stable ID such as `PH-01`. Preserve existing IDs across edits; add new IDs without renumbering or reusing retired ones. Keep retired phase references understandable when a phase is removed.
+- Reference covered PRD stories/criteria, such as `US-01` and `AC-01`, without assigning new IDs to existing requirements. Use existing source anchors when an older PRD has no IDs; do not silently relabel it only inside the plan.
+- Record only genuine blocking phase dependencies, by ID, with a brief reason when not obvious. Independent work should not acquire a dependency merely because it appears later in the document.
+- State the behavior to build, acceptance-criterion references, agreed public test boundary, planned verification methods, and remaining coverage gaps. Distinguish phase checks from final delivery checks and user manual QA.
+- Leave room for concise observed evidence, blockers, and next work inline. New work starts `pending`; planned tests are not results.
 
-Look for:
-- Existing product and architecture boundaries
-- Current route and API shapes
-- Relevant data models and persistence patterns
-- Auth and permission mechanisms
-- Third-party service touchpoints
-- Similar flows or adjacent features
+Check that dependency IDs exist, dependencies have no cycles or self-references, and every in-scope acceptance criterion is covered by one or more phases and a verification method or explicit gap. Flag requirements excluded by a user-selected partial scope. Size phases so a fresh session can recover the goal and verification method from the plan and linked artifacts.
 
-Summarize what the repo clearly shows, what it implies, and what remains uncertain.
+Avoid volatile helper names and detailed file-by-file task lists. Artifact pointers and useful existing test conventions are appropriate; they help execution without becoming a second product specification.
 
-### 3. Identify Durable Architectural Decisions
+## Mechanical Migration Exception
 
-Before slicing the work, extract the decisions that are unlikely to change across phases.
+For broad mechanical changes that cannot land as ordinary vertical slices, use expand–migrate–contract:
 
-Common categories:
-- Routes or URL patterns
-- Schema shape and major entities
-- Key data models and state transitions
-- Authentication and authorization approach
-- Third-party service boundaries
+1. Expand with the compatible new path and verify coexistence with existing callers/data.
+2. Migrate callers/data in verifiable increments, stating the compatibility contract and evidence required before removal.
+3. Contract only after migration dependencies are satisfied; remove the old path and verify final integration and compatibility expectations.
 
-These decisions belong near the top of the plan so each phase can build on them.
+Explain why this structure fits the change. Include applicable failure/recovery or rollback constraints, and the final verification that proves the migration is complete. Do not use the exception to justify arbitrary layer-first feature plans.
 
-### 4. Draft Tracer-Bullet Phases
+## Review and Save
 
-Break the PRD into thin, end-to-end phases.
+Present proposed phase IDs, titles, covered requirements, dependencies, and what each phase proves. Review the initial breakdown with the user and iterate on material granularity or scope choices before saving the final plan. A draft, if requested, must be labeled as such.
 
-Each phase should:
-- Deliver a narrow but complete path through schema, backend, frontend, and tests when those layers exist
-- Cover a coherent subset of the PRD's user stories
-- Produce something the team can demo, validate, or learn from
+When continuing or editing an existing reviewed plan, reuse its settled phases and decisions. Review only material changes to scope, dependencies, or phase structure; do not require the whole plan to be approved again. Preserve observed evidence and progress rather than resetting the plan during an edit.
 
-Avoid horizontal slices such as:
-- "build the database layer"
-- "add all APIs"
-- "implement the UI"
+Read [plan-template.md](references/plan-template.md) when writing. Use a feature-appropriate name in `./plans/`, reuse an existing matching plan, and keep its source PRD link valid. No separate handoff file, approval metadata, or execution log is required.
 
-Prefer vertical slices such as:
-- "first user can create and view a draft item through the main happy path"
-- "admin can review and approve one item with basic audit visibility"
+## Progress Contract
 
-### 5. Review the Breakdown with the User
+The initial plan records an overall implementation status and each phase's status. Use `pending`, `in progress`, `blocked`, and `complete` for phase implementation progress. A completed phase needs passing required agent checks and observed evidence; it does not imply user acceptance or a completed delivery-level external review. Required implementation checks that fail or cannot run prevent phase completion.
 
-Present the proposed breakdown as a numbered list.
+The `implement` skill updates status and evidence in place and owns the execution lifecycle. After all phases and required agent checks finish, with external review completed or its disclosed failure handled under `implement`'s skip policy, the overall plan becomes `awaiting manual QA`. It reaches `complete` only after the user confirms QA passed. The implementation run may end while QA is pending.
 
-For each phase, show:
-- **Title**: short descriptive name
-- **User stories covered**: the user stories or PRD sections the phase addresses
+An unmet agreed requirement or regression found during QA reopens the affected phase as `in progress` or `blocked`, with the finding and revalidation evidence recorded. After fixes, return to `awaiting manual QA` for affected checks. Unrelated enhancements become deferred issues rather than silently expanding the plan. Manual QA is consolidated at the end of the full plan, not repeated after every phase.
 
-Then ask:
-- Does the granularity feel right: too coarse or too fine?
-- Should any phases be merged or split?
+## Finish
 
-Iterate until the user explicitly approves the breakdown.
-
-### 6. Write the Plan File
-
-Create `./plans/` if it does not already exist.
-
-Write a Markdown file named after the feature, for example `./plans/user-onboarding.md`.
-
-Use this template:
-
-```markdown
-# Plan: <Feature Name>
-
-> Source PRD: <brief identifier or link>
-
-## Architectural decisions
-
-Durable decisions that apply across all phases:
-
-- **Routes**: ...
-- **Schema**: ...
-- **Key models**: ...
-- **Auth**: ...
-- **External services**: ...
-
----
-
-## Phase 1: <Title>
-
-**User stories**: <list from PRD>
-
-### What to build
-
-A concise description of this vertical slice. Describe the end-to-end behavior, not layer-by-layer implementation.
-
-### Acceptance criteria
-
-- [ ] Criterion 1
-- [ ] Criterion 2
-- [ ] Criterion 3
-
----
-
-## Phase 2: <Title>
-
-**User stories**: <list from PRD>
-
-### What to build
-
-...
-
-### Acceptance criteria
-
-- [ ] ...
-```
-
-Add, remove, or rename architectural sections when appropriate, but keep the structure focused on durable decisions and thin phases.
-
-## Good Outcome
-
-The skill is complete when:
-- The PRD has been translated into clear, tracer-bullet phases
-- The phase boundaries match the repo's real architecture
-- Durable decisions are explicit and easy to reference
-- The user has approved the granularity
-- The final Markdown plan has been written to `./plans/`
+Return the saved plan link and any material blockers or coverage gaps. Planning is finished when the breakdown is reviewed, dependencies and requirement coverage are coherent, and the file is saved with honest initial progress fields. That does not mean implementation is complete. Do not automatically invoke `implement` or start code/tests merely because the plan exists.

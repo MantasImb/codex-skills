@@ -1,0 +1,4 @@
+interface:
+  display_name: "TDD"
+  short_description: "Build behavior through red-green-refactor"
+  default_prompt: "Use $tdd to implement this behavior test-first through public boundaries and report verification outcomes and coverage limits."

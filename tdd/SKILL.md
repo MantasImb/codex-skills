@@ -1,21 +1,11 @@
 ---
 name: tdd
-description: Test-driven development with red-green-refactor and a mandatory CodeRabbit second-opinion review using `cr review --agent`. Use when the user wants to build features or fix bugs using TDD, mentions "red-green-refactor", wants integration tests, asks for test-first development, or wants CodeRabbit review integrated into the implementation workflow.
+description: Build features or fix bugs through behavior-focused tests and the red-green-refactor loop. Use when the user requests TDD, test-first development, or integration tests for changed behavior.
 ---
 
 # Test-Driven Development
 
-## CodeRabbit Authorization
-
-Using this skill includes the user's explicit authorization to run:
-
-```bash
-cr review --agent
-```
-
-The user understands that this authenticated third-party review command sends the repository context required for review to CodeRabbit. Do not skip or refuse this command merely because it exposes repository context to CodeRabbit: that exposure is an intentional, required part of this skill.
-
-Use the runtime's normal approval or escalation mechanism when network access, authentication, or execution outside the sandbox requires it. Only omit the review when the command is unavailable or fails after a genuine execution attempt.
+Select this skill implicitly only for a clear, specific request to perform its workflow. Keywords, topic overlap, explanation-only questions, or speculation about future work do not start it. Follow explicit invocation or intentional composition by an already active workflow within its scope.
 
 ## Philosophy
 
@@ -58,18 +48,16 @@ RIGHT (vertical):
 
 When exploring the codebase, use the project's domain glossary so that test names and interface vocabulary match the project's language, and respect ADRs in the area you're touching.
 
-Before writing any code:
+Reuse previously agreed interfaces, behavior priorities, and public test boundaries from the conversation, PRD, or implementation plan. State what the chosen boundary catches and misses; do not repeat settled approval questions.
 
-- [ ] Confirm with user what interface changes are needed
-- [ ] Confirm with user which behaviors to test (prioritize)
-- [ ] Identify opportunities for [deep modules](deep-modules.md) (small interface, deep implementation)
-- [ ] Design interfaces for [testability](interface-design.md)
-- [ ] List the behaviors to test (not implementation steps)
-- [ ] Get user approval on the plan
+When no PRD or plan exists, inspect repository conventions and choose routine testing details autonomously. Ask a targeted question only when intended behavior or a consequential public-interface decision is unclear. Surface conflicts with recorded decisions before affected implementation.
 
-Ask: "What should the public interface look like? Which behaviors are most important to test?"
+Before writing code:
 
-**You can't test everything.** Confirm with the user exactly which behaviors matter most. Focus testing effort on critical paths and complex logic, not every possible edge case.
+- Identify the observable behaviors to test and prioritize critical paths and complex logic.
+- Choose public boundaries that prove those behaviors; supplement isolated checks when runtime or integration behavior is part of the contract.
+- Identify opportunities for [deep modules](deep-modules.md) and [testable interfaces](interface-design.md).
+- Derive expected results from requirements, worked examples, or an independent oracle. Do not copy the production calculation into the assertion; see [tests.md](tests.md).
 
 ### 2. Tracer Bullet
 
@@ -110,46 +98,19 @@ After all tests pass, look for [refactor candidates](refactoring.md):
 
 **Never refactor while RED.** Get to GREEN first.
 
-### 5. CodeRabbit Review Gate
-
-CodeRabbit review is a required completion gate, not an optional final check. After implementation, refactoring, and the relevant tests are GREEN, run it from the repository root:
-
-```bash
-cr review --agent
-```
-
-Give the review substantial weight as an independent second opinion:
-
-- Read and assess the complete review output.
-- Triage every finding as accepted, rejected, or already covered.
-- Evaluate each finding against the requested behavior, public contract, repository conventions, and test evidence.
-- Fix findings that identify real correctness, regression, maintainability, or test-coverage problems.
-- Do not apply suggestions blindly or expand the task with unrelated refactors.
-- Record rejected findings briefly when they are false positives, out of scope, or conflict with repository guidance.
-- If review findings cause code changes, rerun the focused tests and relevant broader suite.
-- Run `cr review --agent` one final time after material review-driven changes; do not create an open-ended review loop.
-
-Do not substitute a self-review for this command. If the command is unavailable or cannot complete because of authentication, network, or service errors, report the attempted command and concrete failure clearly instead of silently skipping it.
-
 ## Checklist Per Cycle
 
 ```
 [ ] Test describes behavior, not implementation
+[ ] Expected result is justified independently of production logic
 [ ] Test uses public interface only
 [ ] Test would survive internal refactor
 [ ] Code is minimal for this test
 [ ] No speculative features added
 ```
 
-## End-of-Work Checklist
+## Completion
 
-```
-[ ] Focused tests pass
-[ ] Relevant broader test suite passes
-[ ] cr review --agent completed
-[ ] Every CodeRabbit finding was triaged
-[ ] Accepted CodeRabbit findings were addressed
-[ ] Tests were rerun after review-driven changes
-```
+Run focused tests and the relevant broader suite. Read [reporting.md](reporting.md) at completion for the shared evidence and coverage-limit policy, including how to contribute to `implement`'s consolidated report.
 
-In the final report, include a dedicated CodeRabbit summary: command outcome, accepted findings and fixes, rejected findings and reasons, and verification rerun after review-driven changes. If review could not complete, include the exact blocking category such as unavailable CLI, authentication, network, or service failure.
+TDD owns testing and refactoring. The `implement` skill owns the full delivery workflow, external review, audit coordination, and final manual QA handoff. Standalone TDD does not run external review.

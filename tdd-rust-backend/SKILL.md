@@ -1,21 +1,25 @@
 ---
 name: tdd-rust-backend
-description: Test-driven development for Rust backend services using red-green-refactor. Use when building or fixing Rust domain, application, async service, repository, or HTTP backend behavior with cargo test, request/response tests, integration tests, trait-backed ports, or lightweight fakes.
+description: Apply shared TDD to requested test-first Rust backend behavior through public domain, service, handler, or integration boundaries. Use for clear TDD/behavior-test implementation requests or as an implement adapter; not merely because Rust is mentioned.
 ---
 
 # Rust Backend TDD Adapter
+
+Select this skill implicitly only for a clear, specific request to perform its workflow. Keywords, topic overlap, explanation-only questions, or speculation about future work do not start it. Follow explicit invocation or intentional composition by an already active workflow within its scope.
 
 This skill adapts the shared TDD workflow for Rust backend services.
 
 ## Load First
 
-Use the shared TDD skill as the source of truth:
+Use the shared TDD skill as the source of truth. Resolve its installed location from the available skills; the links below describe this repository layout. If installed separately, resolve the same resources relative to the located `tdd` folder rather than assuming sibling paths.
 
-- Read [../tdd/SKILL.md](../tdd/SKILL.md) for the red-green-refactor workflow, horizontal-slice warning, planning checklist, tracer bullet loop, and cycle checklist.
+- Read [../tdd/SKILL.md](../tdd/SKILL.md) for red-green-refactor, settled-decision reuse, independently justified expectations, and test-boundary selection.
 - Read [../tdd/tests.md](../tdd/tests.md) when choosing test shape or reviewing whether a test verifies behavior.
 - Read [../tdd/mocking.md](../tdd/mocking.md) when deciding whether to use a real dependency, test database, in-memory repository, fake, or mock.
 - Read [../tdd/interface-design.md](../tdd/interface-design.md) when changing services, ports, repositories, handlers, or crate APIs.
 - Read [../tdd/deep-modules.md](../tdd/deep-modules.md) and [../tdd/refactoring.md](../tdd/refactoring.md) before refactoring after GREEN.
+
+If the shared TDD skill or a required resource cannot be found, report the missing dependency instead of claiming its workflow was applied.
 
 Do not duplicate the shared workflow in your reasoning or output. Apply it, then add the Rust-specific decisions below.
 
@@ -28,7 +32,7 @@ Do not duplicate the shared workflow in your reasoning or output. Apply it, then
 
 ## Public Test Surface
 
-Choose the narrowest public Rust surface that proves the behavior:
+Reuse an agreed public test boundary. Otherwise choose a public Rust boundary that proves the requested behavior; prefer a higher existing boundary when it provides meaningful coverage without unnecessary setup:
 
 - Domain function, value type, aggregate, or crate API.
 - Application use case, command/query handler, or service method.
@@ -37,6 +41,8 @@ Choose the narrowest public Rust surface that proves the behavior:
 - `tests/` integration test when behavior spans modules, adapters, or crates.
 
 Avoid testing private methods, internal call counts, lock usage, concrete repository internals, database rows, or private types when public behavior can prove the outcome. Moving code between modules should not break tests when public behavior is unchanged.
+
+Domain/service tests prove behavior through the exercised collaborators. Trait fakes and in-memory repositories do not prove real adapters or persistence. Use handler/router request tests, real persistence checks, or cross-crate integration tests when the requirement crosses those boundaries. A test in `tests/` is not automatically proof of real infrastructure coverage; report what actually ran and what remains unverified.
 
 ## Rust Boundaries
 
@@ -52,20 +58,10 @@ Keep ports small and intent-specific. Methods such as `get_order` and `save_orde
 
 ## Red-Green Commands
 
-Use focused `cargo test` commands:
-
-```bash
-cargo test checkout_confirms_valid_cart
-cargo test -p game_server checkout_confirms_valid_cart
-```
+Discover the repository's workspace, package selection, features, test targets, and existing scripts before choosing focused or broader test commands. Reuse its test setup; check current tool documentation when using unfamiliar options or changing configuration.
 
 After focused GREEN and refactor steps, run the relevant broader Rust suite before closing.
 
 ## End Report
 
-Include a concise "Tests implemented" list:
-
-- Behavior or test name.
-- Scope: `unit`, `integration`, `api/handler`, or repository-native equivalent.
-- File path.
-- Focused and broader `cargo test` commands run, including unrelated remaining failures.
+Read [../tdd/reporting.md](../tdd/reporting.md) for the shared chat-report policy. Use domain/crate API, application/service, handler/router, real persistence, cross-crate integration, or repository-native terminology. Distinguish fakes from real adapter coverage. Under `implement`, contribute evidence to its consolidated report.

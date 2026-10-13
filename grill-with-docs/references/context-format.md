@@ -1,6 +1,6 @@
 # CONTEXT.md Format
 
-`CONTEXT.md` records domain language that domain experts should recognize. It is not an implementation guide.
+`CONTEXT.md` records domain language and reusable invariants that domain experts should recognize. It is not the feature decision record or an implementation guide; feature scope and requirements belong in the PRD. Preserve repository domain-document locations and conventions; use the defaults below when none exist.
 
 ## Structure
 

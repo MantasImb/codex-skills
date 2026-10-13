@@ -59,3 +59,18 @@ test("createUser makes user retrievable", async () => {
   expect(retrieved.name).toBe("Alice");
 });
 ```
+
+## Independently justified expectations
+
+Do not repeat the production calculation to generate expected values. A copied bug can make both sides agree. Use requirements, worked examples, or an independent oracle.
+
+```typescript
+// BAD: Repeats the implementation's rounding calculation.
+expect(calculateFee(1050)).toBe(Math.round(1050 * 0.025));
+
+// GOOD: Requirement: charge 2.5% of the amount in cents, rounded UP.
+// Worked example: 1050 cents gives 26.25 cents, so the fee is 27 cents.
+expect(calculateFee(1050)).toBe(27);
+```
+
+The worked example distinguishes rounding up from rounding to nearest; an example with a whole-number fee would miss that defect.

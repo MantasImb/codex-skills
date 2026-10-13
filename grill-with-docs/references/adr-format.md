@@ -1,6 +1,6 @@
 # ADR Format
 
-ADRs live in `docs/adr/` and use sequential numbering: `0001-slug.md`, `0002-slug.md`, and so on.
+Preserve repository ADR locations, numbering, and format when present. Otherwise ADRs live in `docs/adr/` and use sequential numbering: `0001-slug.md`, `0002-slug.md`, and so on.
 
 Create `docs/adr/` lazily, only when the first ADR is needed.
 

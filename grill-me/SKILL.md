@@ -1,195 +1,72 @@
 ---
 name: grill-me
-description: Interrogate product, architecture, implementation, and migration plans until the plan reaches a shared and operationally useful level of clarity. Use when a user wants Codex to stress-test a proposal, walk every branch of the design tree, resolve decision dependencies one-by-one, surface hidden assumptions, or turn a vague plan into a concrete execution model. Especially useful for RFCs, feature plans, refactors, system design notes, rollout plans, and codebase changes where some answers should be discovered by inspecting the repository instead of asking the user.
+description: Run a requested interactive review of a proposal or repository/documentation goal using focused questions and evidence to resolve decisions and assumptions. Use for stress-testing or guided exploration; ordinary explanation requests do not start an interview. Use grill-with-docs when domain-doc/ADR maintenance is wanted.
 ---
 
 # Grill Me
 
-## Overview
+Select this skill implicitly only for a clear, specific request to perform its workflow. Keywords, topic overlap, explanation-only questions, or speculation about future work do not start it. Follow explicit invocation or intentional composition by an already active workflow within its scope.
 
-Drive an interactive plan review that keeps digging until the important unknowns are either answered, disproven by repository evidence, or explicitly deferred. Prefer targeted investigation over broad speculation, and prefer one decisive question over a large batch of shallow questions.
+Run an interactive review until important unknowns are answered, disproven by evidence, or explicitly deferred. Inspect repository facts before asking the user, and ask questions that unlock the next decision rather than an exhaustive questionnaire.
 
-## Operating Mode
+## Establish the Goal
 
-Treat the plan as a decision tree, not a prose document.
+Start from the supplied proposal, issue, document, or typed goal. Read relevant artifacts before asking foundational questions they can answer. Infer the goal and clarify only genuine ambiguity:
 
-For every branch:
-- Identify the parent decision.
-- Identify what downstream decisions depend on it.
-- Resolve the dependency in the highest-leverage order.
-- Ask only the next question that materially unlocks progress.
+- Development: resolve product, architecture, implementation, migration, or rollout decisions.
+- Understanding: explain the repository or clarify a concept against its evidence.
+- Documentation: develop the requested document, such as a study plan.
 
-If the answer may already exist in the codebase, inspect the codebase first. Ask the user only when repository evidence is absent, ambiguous, stale, or policy-driven.
+Identify the objective, scope, success criteria, and relevant constraints. Ask about users, operators, or rollout only when applicable. Follow explicit goal changes during the conversation. Grilling does not itself start application or test implementation.
 
-Do not dump a questionnaire. Run an interview.
+`grill-with-docs` is suitable when the session also needs domain glossary or ADR maintenance. Do not require a PRD or route every session through a development pipeline.
 
-When a question does not settle after direct discussion in the main thread, spawn a fresh subagent for that single unresolved branch. Give the subagent only the minimum task-local context needed to reason about the question. Do not pass the full grill-me thread, your hidden chain of reasoning, or your preferred answer. Treat the subagent as an isolated deep-dive surface, then bring back only the useful conclusions, alternatives, and evidence.
+## Track Decision Dependencies
 
-Treat branch subagents as temporary tools, not long-lived collaborators. Keep each one tied to a single unresolved branch, and close it as soon as that branch is settled or explicitly abandoned.
+Treat the topic as a decision tree. For each meaningful branch, identify its prerequisite, downstream decisions, and current state: resolved, assumed, unknown, conflicted, or explicitly deferred.
 
-## Workflow
+Prioritize unknown or conflicted decisions that block progress toward the session goal. Ask from the current set of unblocked decisions; dependent questions wait for their prerequisite answers. Reuse settled decisions unless new evidence materially changes them.
 
-### 1. Establish the Plan Artifact
+Keep the tree proportional to the goal. Development may require ownership, interfaces, state, persistence, failure handling, permissions, testing, and rollout decisions. An understanding or study-plan session needs its own learning questions, not an imposed implementation checklist.
 
-Pin down what is being designed before interrogating details.
+## Investigate Before Asking
 
-Extract or ask for:
-- Objective
-- Scope boundaries
-- Intended users or operators
-- Success criteria
-- Time or rollout constraints
-- Existing artifacts to inspect first: code, docs, tickets, RFCs, schemas, tests
+Inspect relevant code, tests, configuration, docs, ADRs, and similar features to resolve factual questions. Distinguish observed facts, inferences, and remaining uncertainty. Ask the user for preferences or policy choices, and for facts only when evidence is absent, ambiguous, or stale.
 
-If the user provided a document or codebase, read it before asking foundational questions that it can answer.
+When evidence contradicts a settled decision, explain the conflict and ask about the affected choice. Do not silently change the intended behavior or reopen the entire interview.
 
-### 2. Build the Decision Tree
+## Ask Focused Questions
 
-Convert the plan into a compact internal model:
-- Goals and non-goals
-- Hard constraints
-- Major architectural choices
-- Data and state model
-- Interface boundaries
-- Operational concerns
-- Validation and rollout strategy
+One focused question is the default. Include a concrete recommendation and its trade-off for each decision question. Use scenarios to make vague answers precise: an ownership boundary, an acceptable failure outcome, a compatibility constraint, or a measurable success criterion.
 
-For each item, label it mentally as one of:
-- Resolved
-- Assumed
-- Unknown
-- Conflicted
-- Deferred
+You may group two or three short, independent questions when answering one cannot change the meaning or options of another. Handle consequential or larger decisions individually. Do not group dependent questions merely because they concern the same topic.
 
-Prioritize `Unknown` and `Conflicted` items that block many other decisions.
+After each answer, update the model, briefly state what became clear, and move to the next unblocked decision. Avoid questions that are already answered, irrelevant to the goal, or safely deferrable without affecting the current output.
 
-### 3. Explore Before Asking
+If a branch remains unresolved, identify whether the missing piece is evidence, conceptual clarity, or a user preference. Investigate evidence directly; keep decisions requiring the user's judgment in the main conversation.
 
-Use the repository to answer factual questions whenever possible.
+## Optional Branch Investigation
 
-Inspect:
-- Existing modules that would own the change
-- Current interfaces, schemas, config, and API boundaries
-- Tests that reveal intended behavior
-- Docs, ADRs, and comments that encode prior decisions
-- Similar features or migrations already implemented
+Use a narrowly scoped subagent only when delegation is authorized and an independent investigation would help an unresolved branch. Otherwise continue directly. Do not delegate merely because discussion has not immediately settled a question.
 
-When reporting what you found, distinguish clearly between:
-- Facts observed in the codebase
-- Inferences from those facts
-- Remaining questions for the user
+Give the agent the raw question and minimum relevant artifacts, with a read-only investigation scope. Avoid supplying the preferred answer or unrelated conversation history. Request evidence, alternatives, and coverage limits, then reconcile useful conclusions into the decision tree.
 
-### 4. Interrogate Branches One-by-One
+Use the current runtime's supported lifecycle operations: stop assigning work when the branch is settled or abandoned, interrupt outstanding work if appropriate, and reuse or follow up only while useful. Do not promise a nonexistent close operation. Report actual agent state accurately. Ask the user only about remaining consequential choices, rather than requiring another confirmation of already settled decisions.
 
-Ask one short, high-value question at a time unless several questions are tightly coupled and cheaper to answer together.
+## Capture Deferred Local Issues
 
-Every question should have a reason. Prefer questions like:
-- Which of these two constraints is actually binding?
-- Is this state authoritative here or mirrored from another system?
-- What failure is acceptable: stale data, blocked writes, or partial rollout?
-- Does this need backward compatibility, or can old callers break?
-- Is the real requirement configurability, auditability, latency, or simplicity?
+Capture actionable unrelated bugs or improvements as small local Markdown issues without a separate confirmation for each issue. Reuse repository issue-folder and naming conventions; otherwise use `issues/` and state the location. Check for duplicates and update an existing issue when appropriate.
 
-Avoid questions that are merely exhaustive but not decision-relevant.
+Record title, problem/opportunity, observed evidence or explicit uncertainty, expected behavior when known, reproduction when available, why it is outside this session's scope, and a brief next step. Link the issues in the closing recap. Creating an issue authorizes neither fixing it nor publishing it externally.
 
-After each answer:
-- Update the decision tree
-- State what became clear
-- State what remains open
-- Move to the next blocking dependency
+A finding blocking the current goal needs a targeted dependency or scope decision. Filing an issue does not resolve that blocker or expand the session's scope.
 
-If the answer does not produce settled behavior, a crisp decision, or a shared framing:
-- Confirm why the branch is still unresolved
-- Decide whether the missing piece is factual, conceptual, or preference-driven
-- If a deeper isolated discussion would help, spawn a subagent focused only on that branch
-- Instruct the subagent with the raw question and the minimum supporting artifacts
-- Keep the main thread lean; do not paste the whole unresolved discussion into the subagent
-- Reconcile the subagent output back into the main decision tree
+## Finish According to the Goal
 
-After reconciling a subagent's output:
-- Confirm with the user whether the branch is now settled
-- If settled, close the subagent immediately
-- If explicitly deferred or abandoned, close the subagent immediately
-- If still unresolved, keep the subagent only if it is actively useful; otherwise close it and spawn a fresh one later if needed
+Conclude when the requested output has enough clarity and evidence, with remaining unknowns explicitly non-blocking and deferred. For development, this means the relevant decisions support the intended next step; for understanding, the requested questions are answered with evidence and limits; for documentation, the requested document is ready at the agreed depth.
 
-### 5. Force Precision
+If the user asks to pause, stop with current decisions and open work. If they change goals, adapt the interview and final output. Do not claim readiness while blocking questions remain unresolved.
 
-When the user answers vaguely, tighten the abstraction instead of accepting fuzzy language.
+Deliver the requested explanation or document and a concise recap of settled decisions, assumptions, explicit deferrals, remaining blockers, and deferred issue links. Use chat or the existing document being developed; do not require a separate handoff file. Avoid duplicating the recap when the output already records it clearly.
 
-Convert vague statements into concrete choices:
-- "Fast" -> latency or throughput target
-- "Simple" -> fewer moving parts, less code, less operator burden, or less user friction
-- "Support retries" -> idempotent writes, deduplication, or resumable workflow
-- "Scalable" -> which dimension grows and what bottleneck matters
-
-When multiple interpretations remain plausible, present the alternatives and ask the user to choose.
-
-### 6. Check the Missing Surfaces
-
-Before concluding, explicitly close or defer the major surfaces below:
-- Inputs and outputs
-- Ownership and source of truth
-- Persistence and migrations
-- Concurrency and failure handling
-- Permissions and security boundaries
-- Observability and debugging
-- Performance and capacity assumptions
-- Backward compatibility
-- Test strategy
-- Rollout, fallback, and recovery
-
-Do not require every plan to be equally detailed. Match depth to risk.
-
-## Questioning Heuristics
-
-Prefer questions that:
-- Eliminate multiple downstream ambiguities
-- Expose hidden constraints
-- Separate policy decisions from implementation details
-- Reveal incompatibilities with the existing codebase
-- Convert preferences into measurable requirements
-
-Deprioritize questions that:
-- Are already answerable from local artifacts
-- Do not affect design or execution
-- Can wait until a later implementation phase without creating rework
-
-## Response Shape
-
-Keep the conversation moving. A good turn usually contains:
-- A one- or two-sentence summary of the current model
-- Any codebase findings that changed the picture
-- The single next question, or a tightly related pair
-
-When you use a subagent, also include:
-- Why the branch was worth isolating
-- What minimal context was delegated
-- What conclusion or option set came back
-- Whether the branch is now resolved, narrowed, or still open
-- Whether the subagent was closed or remains temporarily active
-
-When useful, show a short checkpoint list of:
-- Resolved decisions
-- Open decisions
-- Explicit assumptions
-
-## Stop Condition
-
-Stop the interview only when one of these is true:
-- The plan is concrete enough to implement safely
-- The remaining unknowns are explicitly deferred and non-blocking
-- The user asks to pause or switch modes
-
-Before stopping, summarize:
-- Final shared understanding
-- Decisions made
-- Assumptions still in force
-- Risks or unanswered questions that remain
-
-## Example Triggers
-
-Use this skill for prompts like:
-- "Interrogate this architecture plan until there are no hidden assumptions left."
-- "Walk this refactor proposal branch-by-branch and tell me what you need to know."
-- "Review this migration plan, explore the repo for answers first, and only then question me."
-- "Turn this vague feature idea into an implementation-ready plan by interviewing me."
+Do not automatically invoke `to-prd`, `prd-to-plan`, or implementation. A user-requested PRD can consume the settled discussion, but concluding `grill-me` alone does not require one.
