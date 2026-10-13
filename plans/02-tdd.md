@@ -11,7 +11,8 @@ TDD owns behavior tests and the red-green-refactor loop. `implement` owns CodeRa
 - Remove CodeRabbit authorization, execution, completion checklist entries, and final-report requirements from TDD. Move that policy to `implement` during the same rollout.
 - Add the tautological-test anti-pattern: expected values come from requirements, worked examples, or another independent oracle rather than duplicating the production calculation.
 - Add a contrasting example to `tests.md` and an independent-expectation check to the cycle checklist.
-- Consume previously agreed public test boundaries; propose and confirm boundaries only when absent or materially changed. State what each boundary catches and misses.
+- Consume previously agreed interfaces, behavior priorities, and public test boundaries from the PRD and implementation plan without repeating settled questions. State what each boundary catches and misses.
+- For standalone TDD without a PRD or plan, inspect repository conventions and choose routine testing details autonomously. Ask only when intended behavior or a consequential interface decision is unclear; surface conflicts with recorded decisions before proceeding with affected work.
 - Preserve vertical slices, observable behavior, minimal GREEN implementation, and refactoring after GREEN.
 - End with tests implemented, verification outcomes, and coverage limits; point to `implement` for the complete delivery workflow.
 
@@ -19,7 +20,9 @@ TDD owns behavior tests and the red-green-refactor loop. `implement` owns CodeRa
 
 - [ ] Standalone TDD contains no CodeRabbit gate or promise of external review.
 - [ ] Recomputed expected values are identified as weak test evidence.
-- [ ] An approved boundary is reused without another approval checkpoint.
+- [ ] A previously agreed boundary is reused without another approval checkpoint.
+- [ ] Standalone TDD can proceed without a PRD or plan when behavior is clear; routine testing choices do not require confirmation.
+- [ ] Unclear behavior or consequential interface decisions trigger a targeted question.
 - [ ] RED fails for the intended missing behavior, followed by GREEN and relevant regression checks.
 
 ## Coordination
