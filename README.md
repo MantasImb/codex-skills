@@ -26,6 +26,10 @@ Clearly scoped bugs or small changes can enter `implement` directly without a PR
 
 For understanding or documentation sessions, use [grill-me](grill-me/SKILL.md), or `grill-with-docs` when maintaining domain docs/ADRs; finish with the requested output rather than requiring a PRD. Use [prototype](prototype/SKILL.md) when exploration helps resolve a decision, retaining local evidence until review and agreed cleanup. Explicitly invoke [BTW](BTW/SKILL.md) for a read-only side-agent question; inline fallback requires your agreement.
 
+## Business systems
+
+[grill-business](grill-business/SKILL.md) develops and improves business systems through focused discussion and incremental documentation. It separates business context, system-development records, and operational resources; uses outcome-based branch checkpoints; and requires explicit adoption before replacing working instructions. It is independent of the software development workflow above.
+
 ## Reference skills from another repository
 
 Use a Git submodule to keep another developer's skills in `references/external-skills/`. The source repository stays separate, and this repo records the exact commit used as a reference.
